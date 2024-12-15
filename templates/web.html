@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+
+    <title>Finding closest vacant roadside parking space system</title>
+    <style>
+        #map {
+            height: 700px;  /* 設置地圖容器的高度 */
+            width: 100%;    /* 設置地圖容器的寬度 */
+            
+        }
+        #map-controls {
+            position: absolute;
+            top: 1100px;
+            left: 4%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+
+        .container-fluid {
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .header-container {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .header-logo {
+            position: absolute; /* 使用絕對定位 */
+            bottom: 0px; /* 距離底部 20px */
+            left: 20px; /* 距離左邊 20px */
+            max-width: 185px; /* 設定最大寬度為 200px */
+            width: auto; /* 自動寬度，以保持圖片比例 */
+            height: auto; /* 自動高度，以保持圖片比例 */
+        }
+
+
+
+
+        .header-image {
+            display: block;
+            margin: 20px auto;
+            max-width: 100%;
+            height: 500px;
+            width: 100%; /* 設置圖片的寬度為父容器的 80% */
+        }
+
+        /* 固定導航欄 */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: white;
+        }
+        .header-text {
+            position: absolute;
+            bottom: 20px; /* 調整底部距離 */
+            left: 20px; /* 調整左邊距離 */
+            font-size: 2rem; /* 加大字體 */
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* 增加陰影以提高可讀性 */
+        }
+
+
+        body {
+            padding-bottom: 1000px; /* 調整數值來增加空白區域 */
+            }
+
+
+
+        .faq-container {
+            width: 100%;
+            max-width: 1200px; /* 最大寬度可以根據需要調整 */
+            padding: 20px;
+            margin: 20px auto;
+        }
+
+        html {
+            scroll-padding-top: 100px; /* 根據導航欄高度調整，跳轉不擋到 */
+        }
+
+        /* 确保容器内的列表项靠左对齐 */
+        ul {
+            text-align: left;
+            padding-left: 50px;
+            list-style-position: inside;
+        }
+
+        li {
+            padding-left: 0;
+        }
+
+
+                
+
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid">
+        <!-- 固定的導航欄 -->
+        <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom fixed-top bg-white">
+          <a href="web.html" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+            <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
+            <img src="static/image/logo.png" class="header-logo" >
+        </a>
+    
+          <ul class="nav nav-pills">
+            <li class="nav-item"><span class="nav-link text-dark" id="username-display" style="display: none;">Welcome, <span id="username"></span></span></li>
+            <li class="nav-item"><a href="login.html" class="nav-link active" id="nav-logout">Log out</a></li>
+            <li class="nav-item" id="nav-logout-item" style="display: none;">
+                <a href="#" class="nav-link" id="nav-logout" onclick="logout()">Log out</a>
+            </li>
+            <li class="nav-item"><a href="#features-section" class="nav-link" id="nav-functions">Functions</a></li> <!--跳至該網站系統特色區塊id step2-->
+            <li class="nav-item"><a href="#map" class="nav-link" id="nav-notice">System</a></li>
+            <!--<li class="nav-item"><a href="get_parking_status.html" class="nav-link" id="nav-notice">System</a></li>-->
+            <li class="nav-item"><a href="#faq" class="nav-link" id="nav-faqs">FAQs</a></li>
+            <li class="nav-item"><a href="#faq" class="nav-link" id="nav-about">About</a></li>
+          </ul>
+
+            <!-- 語言切換按鈕 -->
+            <button onclick="switchLanguage('en')" class="btn btn-outline-primary mx-2">English</button>
+            <button onclick="switchLanguage('zh')" class="btn btn-outline-primary">中文</button>
+        </header>
+
+
+        <!-- 添加圖片 -->
+        <div class="header-container">
+            <img src="static/image/停車系統1.png" alt="Descriptive Alt Text" class="header-image"> 
+            <div id="site-title" class="header-text" >Finding closest vacant roadside parking space system</div>
+        </div>
+
+
+    <!-- 系統特色區塊 -->
+    <div class="container my-5" id="features-section"> <!--跳至該網站系統特色區塊id step1-->
+        <h2 class="text-center mb-4" id="features-title">System Features</h2>
+        <div class="row">
+            <div class="col-md-4 text-center">
+                <img src="static/image/車位搜尋.png" alt="即時停車系統" width="50">
+                <h5 class="mt-3" id="feature-1-title">Real-time parking system</h5>
+                <ul id="feature-1-description">
+                    <li>Provides real-time parking space detection</li>
+                    <li>Reduces time and cost in finding parking</li>
+                    <li>Improves the utilization rate of parking spaces</li>
+                </ul>
+            </div>
+            <div class="col-md-4 text-center">
+                <img src="static/image/技術.png" alt="邊緣運算" width="50">
+                <h5 class="mt-3" id="feature-2-title">Edge computing</h5>
+                <ul id="feature-2-description">
+                    <li>Utilizes edge computing technology</li>
+                    <li>Processes real-time image data captured by cameras</li>
+                    <li>Ensures efficient and fast response times</li>
+                </ul>
+            </div>
+            <div class="col-md-4 text-center">
+                <img src="static/image/及時車位狀態.png" alt="物件偵測技術" width="50">
+                <h5 class="mt-3" id="feature-3-title">Object detection technology</h5>
+                <ul id="feature-3-description">
+                    <li>Using YOLO</li>
+                    <li>Enhances detection accuracy and efficiency</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- 系統特色區塊結束 -->
+
+        <!-- 這裡是用於顯示Google地圖的容器 -->
+        <div id="map"></div>
+
+
+      <!-- FAQ 區塊 -->
+<div class="faq-container" id="faq">
+    <h2 class="text-center mb-4" id="faq-header">FAQs</h2>
+    <div class="accordion" id="faqAccordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    <!-- Question 1 -->
+                    <span id="faq-1-question">What is the accuracy of the parking spot detection?</span>
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    <!-- Answer 1 -->
+                    <span id="faq-1-answer">The accuracy depends on the quality of the camera and the environment, but it generally achieves over 90% accuracy.</span>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    <!-- Question 2 -->
+                    <span id="faq-2-question">Can I reserve a parking spot in advance?</span>
+                </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    <!-- Answer 2 -->
+                    <span id="faq-2-answer">Currently, the system does not support advance reservations. It provides real-time availability information only.</span>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingThree">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    <!-- Question 3 -->
+                    <span id="faq-3-question">How often is the parking information updated?</span>
+                </button>
+            </h2>
+            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    <!-- Answer 3 -->
+                    <span id="faq-3-answer">Parking information is updated in real-time as the system detects changes in parking availability.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- FAQ 區塊結束 -->
+
+
+</div>
+      
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD_11dC6Xawc4eM4qEHT8yHAqOmdu6Kcz8"></script>
+<script>
+    
+    // 用於保存空車位的數據
+    /*const parkingSpots1 = [
+        { lat: 24.97547990088665, lng: 121.24201985399917, title: "Parking Spot 1", address: "地址1", available: 10 },
+        { lat: 25.0328, lng: 121.5651, title: "Parking Spot 2", address: "地址2", available: 5 },
+        { lat: 25.0312, lng: 121.56, title: "Parking Spot 3", address: "地址3", available: 5 },
+        // 更多的空車位
+    ];
+
+    const customIcon = {
+        url: 'static/image/p.png',  
+        scaledSize: new google.maps.Size(40, 40), 
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(15, 15) 
+    };*/
+
+    let directionsService;
+    let directionsRenderer;
+    let map;
+    //let userPosition;
+    //let markers = [];
+    const infoWindows = []; // 用於管理多個 InfoWindow
+
+    function initMap() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var userPosition = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: userPosition,
+                    zoom: 15
+                });
+
+                directionsService = new google.maps.DirectionsService();
+                directionsRenderer = new google.maps.DirectionsRenderer();
+                directionsRenderer.setMap(map);
+
+                // 添加標記
+                var marker = new google.maps.Marker({
+                    position: userPosition,
+                    map: map,
+                    title: "You are here!"
+                });
+                
+                // 添加空車位標記
+                /*parkingSpots1.forEach(function(spot) {
+                    var marker = new google.maps.Marker({
+                        position: { lat: spot.lat, lng: spot.lng },
+                        map: map,
+                        title: spot.title,
+                        icon: customIcon
+                    });
+
+                    google.maps.event.addListener(marker, 'click', function() {
+                        showParkingInfo(userPosition, spot);
+                    });
+                });*/
+
+                //fetchParkingSpots();
+
+                //setInterval(fetchParkingSpots, 30000); 
+            }, function() {
+                handleLocationError(true, map.getCenter());
+            });
+        } else {
+            handleLocationError(false, map.getCenter());
+        }
+    }
+
+    const parkingSpots = [
+    { point_id: 1, title: "Parking Spot 1", address: "106 Lane 119, Section 4, Roosevelt Road, Daan District, Taipei City, Taiwan", lat: 25.010445788386836, lng: 121.53820552847124 },
+    { point_id: 2, title: "Parking Spot 2", address: "106 Lane 113, Section 4, Roosevelt Road, Xuefuli, Daan District, Taipei City, Taiwan", lat: 25.011370059458557, lng: 121.5408097823608 }
+];
+
+function showParkingInfo(start, spot, availableSpots) {
+    const infoContent = `
+        <div>
+            <h3>${spot.title}</h3>
+            <p>Available spots: ${availableSpots}</p>
+            <p>Address: ${spot.address}</p>
+            <p>Last updated: ${new Date().toLocaleString()}</p>
+            <button onclick="openGoogleMapsNavigation(${start.lat}, ${start.lng}, ${spot.lat}, ${spot.lng})">Navigate here</button>
+        </div>
+    `;
+    const infoWindow = new google.maps.InfoWindow({
+        content: infoContent
+    });
+    infoWindow.setPosition({ lat: spot.lat, lng: spot.lng });
+    infoWindow.open(map);
+}
+
+function openGoogleMapsNavigation(startLat, startLng, endLat, endLng) {
+    const url = `https://www.google.com/maps/dir/?api=1&origin=${startLat},${startLng}&destination=${endLat},${endLng}&travelmode=driving`;
+    window.open(url, '_blank');
+}
+
+function fetchParkingStatus(pointId) {
+    fetch(`http://127.0.0.1:5000/get_parking_status/${pointId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.available_spots !== undefined) {
+                const spot = parkingSpots.find(spot => spot.point_id === pointId);
+                if (spot) {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(function (position) {
+                            const userLocation = { lat: position.coords.latitude, lng: position.coords.longitude };
+                            showParkingInfo(userLocation, spot, data.available_spots);
+                        });
+                    }
+                } else {
+                    alert(`Error: Point ID ${pointId} not found`);
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Unable to connect to the server.');
+        });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const pointIds = [1, 2];
+    pointIds.forEach(fetchParkingStatus);
+    setInterval(() => pointIds.forEach(fetchParkingStatus), 10000);
+});
+
+
+</script>
+
+
+
+
+<script>
+        
+        
+        // 定義中英文翻譯內容
+        const translations = {
+            en: {
+                title: "Finding closest vacant roadside parking space system",
+                logout: "Log out",
+                functions: "Functions",
+                notice: "Notice",
+                faqs: "FAQs",
+                about: "About",
+                featuresTitle: "System Features",
+                feature1Title: "Real-time parking system",
+                feature1Description: [
+                    "Provides real-time parking space detection",
+                    "Reduces time and cost in finding parking",
+                    "Improves the utilization rate of parking spaces"
+                ],
+                feature2Title: "Edge computing",
+                feature2Description: [
+                    "Utilizes edge computing technology",
+                    "Processes real-time image data captured by cameras",
+                    "Ensures efficient and fast response times"
+                ],
+                feature3Title: "Object detection technology",
+                feature3Description: [
+                    "Using YOLO",
+                    "Enhances detection accuracy and efficiency"
+                ],
+                faqHeader: "FAQs",
+                faq1Question: "What is the accuracy of the parking spot detection?",
+                faq1Answer: "The accuracy depends on the quality of the camera and the environment, but it generally achieves over 90% accuracy.",
+                faq2Question: "Can I reserve a parking spot in advance?",
+                faq2Answer: "Currently, the system does not support advance reservations. It provides real-time availability information only.",
+                faq3Question: "How often is the parking information updated?",
+                faq3Answer: "Parking information is updated in real-time as the system detects changes in parking availability."
+            },
+            zh: {
+                title: "尋找最近的空閒路邊停車位系統",
+                logout: "登出",
+                functions: "功能",
+                notice: "公告",
+                faqs: "常見問題",
+                about: "關於",
+                featuresTitle: "系統特色",
+                feature1Title: "即時停車系統",
+                feature1Description: [
+                    "提供即時停車位檢測",
+                    "減少尋找停車位的時間和成本",
+                    "提高停車位的使用率"
+                ],
+                feature2Title: "邊緣運算",
+                feature2Description: [
+                    "利用邊緣運算技術",
+                    "處理相機捕獲的即時影像數據",
+                    "確保高效和快速的反應時間"
+                ],
+                feature3Title: "物件偵測技術",
+                feature3Description: [
+                    "採用YOLO",
+                    "提高偵測準確性和效率"
+                ],
+                faqHeader: "常見問題",
+                faq1Question: "停車位檢測的準確度是多少？",
+                faq1Answer: "準確度取決於相機的質量和環境，但通常能達到 90% 以上的準確率。",
+                faq2Question: "我可以提前預訂停車位嗎？",
+                faq2Answer: "目前系統不支持提前預訂，只提供即時可用信息。",
+                faq3Question: "停車信息的更新頻率是什麼？",
+                faq3Answer: "系統會實時更新停車信息，以反映空車位的變化。"
+            }
+        };
+
+        // 切換語言的函數
+        function switchLanguage(language) {
+            document.getElementById('site-title').textContent = translations[language].title;
+            document.getElementById('nav-logout').textContent = translations[language].logout;
+            document.getElementById('nav-functions').textContent = translations[language].functions;
+            document.getElementById('nav-notice').textContent = translations[language].notice;
+            document.getElementById('nav-faqs').textContent = translations[language].faqs;
+            document.getElementById('nav-about').textContent = translations[language].about;
+            document.getElementById('features-title').textContent = translations[language].featuresTitle;
+            
+            // 更新特色區塊內容
+            const featureTitles = [
+                'feature-1-title',
+                'feature-2-title',
+                'feature-3-title',
+            ];
+            const featureDescriptions = [
+                'feature-1-description',
+                'feature-2-description',
+                'feature-3-description',
+               
+            ];
+            
+            featureTitles.forEach((id, index) => {
+                document.getElementById(id).textContent = translations[language][`feature${index + 1}Title`];
+            });
+            
+            featureDescriptions.forEach((id, index) => {
+                const descriptionElement = document.getElementById(id);
+                descriptionElement.innerHTML = translations[language][`feature${index + 1}Description`]
+                    .map(item => `<li>${item}</li>`)
+                    .join('');
+            });
+
+            // 更新 FAQ 區塊內容
+            document.getElementById('faq-header').textContent = translations[language].faqHeader;
+            document.getElementById('faq-1-question').textContent = translations[language].faq1Question;
+            document.getElementById('faq-1-answer').textContent = translations[language].faq1Answer;
+            document.getElementById('faq-2-question').textContent = translations[language].faq2Question;
+            document.getElementById('faq-2-answer').textContent = translations[language].faq2Answer;
+            document.getElementById('faq-3-question').textContent = translations[language].faq3Question;
+            document.getElementById('faq-3-answer').textContent = translations[language].faq3Answer;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLoginStatus();
+        });
+
+        // 統一加載地圖和語言翻譯
+        window.onload = function() {
+            initMap();
+            checkLoginStatus();
+            switchLanguage('en'); 
+        };
+</script>
+    
+
+
+    
+    
+
+
+    
+    
+    <script src="static/js/bootstrap.bundle.min.js"></script>
+   </body>
+</html>
