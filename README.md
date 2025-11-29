@@ -79,6 +79,7 @@ Camera scripts run automatically to capture and process images.
 ├── templates/                # Frontend HTML
 └── take_and_detect_photo/    # Detection & camera module
 ```
+The result could download the result_video to check out the demo.
 ---
 
 <a name="中文"></a>
