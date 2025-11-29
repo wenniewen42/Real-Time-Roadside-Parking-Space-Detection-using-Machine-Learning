@@ -1,0 +1,10 @@
+flask
+flask-cors
+flask-login
+flask-sqlalchemy
+werkzeug
+roboflow
+pillow
+opencv-python
+pyngrok
+requests
